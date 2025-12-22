@@ -1,0 +1,1230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BrainWave Study Hub - Office Rental System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #eff6ff 0%, #e0e7ff 100%);
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            color: #1e3a8a;
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            font-size: 1.25rem;
+            color: #374151;
+        }
+
+        .header .subtitle {
+            font-size: 0.875rem;
+            color: #6b7280;
+            margin-top: 0.5rem;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 1.5rem;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 1rem;
+        }
+
+        .btn-primary {
+            background: #2563eb;
+            color: white;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background: #1d4ed8;
+        }
+
+        .btn-secondary {
+            background: #374151;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #1f2937;
+        }
+
+        .btn-danger {
+            background: #ef4444;
+            color: white;
+            padding: 0.5rem 1rem;
+        }
+
+        .btn-danger:hover {
+            background: #dc2626;
+        }
+
+        .btn-gray {
+            background: #d1d5db;
+            color: #374151;
+        }
+
+        .btn-gray:hover {
+            background: #9ca3af;
+        }
+
+        .btn:disabled {
+            background: #d1d5db;
+            color: #9ca3af;
+            cursor: not-allowed;
+        }
+
+        .success-message {
+            background: #d1fae5;
+            border: 2px solid #10b981;
+            color: #065f46;
+            padding: 1rem 1.5rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 1.5rem;
+        }
+
+        .office-grid {
+            display: grid;
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .premium-grid {
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        }
+
+        .solo-grid {
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        }
+
+        .office-card {
+            background: white;
+            border: 2px solid #3b82f6;
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            transition: transform 0.2s;
+        }
+
+        .office-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .office-card.unavailable {
+            border-color: #d1d5db;
+            background: #f9fafb;
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+
+        .card-title {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .card-title h3 {
+            font-size: 1.125rem;
+            font-weight: 700;
+        }
+
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+
+        .status-available {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .status-occupied {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .card-details {
+            margin-bottom: 1rem;
+        }
+
+        .card-details p {
+            color: #6b7280;
+            margin-bottom: 0.5rem;
+        }
+
+        .price {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #2563eb;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 0.5rem;
+            padding: 2rem;
+            max-width: 500px;
+            width: 90%;
+        }
+
+        .modal-header {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-group label:has(input[type="checkbox"]) {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 0.5rem 1rem;
+            border: 2px solid #d1d5db;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+        }
+
+        .form-group input[type="checkbox"] {
+            width: auto;
+            margin-right: 0.5rem;
+            cursor: pointer;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #2563eb;
+        }
+
+        .form-group label {
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+        }
+
+        .total-box {
+            background: #eff6ff;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .total-box .total {
+            font-size: 1.125rem;
+            font-weight: 600;
+        }
+
+        .total-box .breakdown {
+            font-size: 0.875rem;
+            color: #6b7280;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .modal-actions .btn {
+            flex: 1;
+        }
+
+        .data-table {
+            background: white;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            overflow-x: auto;
+        }
+
+        .empty-state {
+            background: white;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+            text-align: center;
+            color: #9ca3af;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background: #2563eb;
+            color: white;
+        }
+
+        thead.history {
+            background: #374151;
+        }
+
+        th {
+            padding: 1rem 1.5rem;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        td {
+            padding: 1rem 1.5rem;
+        }
+
+        tbody tr:nth-child(even) {
+            background: #f9fafb;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .office-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            table {
+                font-size: 0.875rem;
+            }
+            
+            th, td {
+                padding: 0.75rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>BrainWave</h1>
+            <p>Study Hub - Office Rental System</p>
+            <p class="subtitle">Walk-in Rental Available</p>
+        </div>
+
+        <!-- Rates Section -->
+        <h2 class="section-title">Rates</h2>
+        <div class="office-grid premium-grid" style="margin-bottom: 2rem;">
+            <!-- Day Shift Rates -->
+            <div class="data-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th colspan="2">Day Shift Rates (8am – 8pm)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Hourly Rate A (2–3 hours)</td>
+                            <td>₱129</td>
+                        </tr>
+                        <tr>
+                            <td>Hourly Rate B (3–6 hours)</td>
+                            <td>₱179</td>
+                        </tr>
+                        <tr>
+                            <td>ONE Day Pass</td>
+                            <td>₱229</td>
+                        </tr>
+                        <tr>
+                            <td>Solo Workspace</td>
+                            <td>₱50/hour</td>
+                        </tr>
+                        <tr>
+                            <td>Conference Room</td>
+                            <td>₱1500 / 4 hours</td>
+                        </tr>
+                        <tr>
+                            <td>Extended Access</td>
+                            <td>₱400/hour</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Night Shift Rates -->
+            <div class="data-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th colspan="2">Night Shift Rates (8pm – 6am)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Hourly Rate</td>
+                            <td>₱60</td>
+                        </tr>
+                        <tr>
+                            <td>Hourly Rate C (4–6 hours)</td>
+                            <td>₱229</td>
+                        </tr>
+                        <tr>
+                            <td>ONE Night Pass</td>
+                            <td>₱359</td>
+                        </tr>
+                        <tr>
+                            <td>Solo Workspace</td>
+                            <td>₱60/hour</td>
+                        </tr>
+                        <tr>
+                            <td>Conference Room</td>
+                            <td>₱1599 / 4 hours</td>
+                        </tr>
+                        <tr>
+                            <td>Extended Access</td>
+                            <td>₱450/hour</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Special Passes -->
+            <div class="data-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th colspan="2">Special Passes</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Day–Night Pass (8am–6am)</td>
+                            <td>₱450</td>
+                        </tr>
+                        <tr>
+                            <td>Midnight Pass (8am–12mn)</td>
+                            <td>₱350</td>
+                        </tr>
+                        <tr>
+                            <td>12to12 Pass (12nn–12mn)</td>
+                            <td>₱300</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Controls -->
+        <div class="controls">
+            <button class="btn btn-secondary" id="historyBtn">
+                <span id="historyBtnText">View History</span> (<span id="historyCount">0</span>)
+            </button>
+        </div>
+
+        <!-- Success Message -->
+        <div id="successMessage" class="success-message hidden">
+            ✓ Rental Successful! Check-in completed.
+        </div>
+
+        <!-- History Section -->
+        <div id="historySection" class="hidden" style="margin-bottom: 3rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                <h2 class="section-title" style="margin-bottom: 0;">Rental History</h2>
+                <button class="btn btn-danger" id="clearHistoryBtn" style="padding: 0.5rem 1rem;">Clear History</button>
+            </div>
+            <div id="historyEmpty" class="empty-state">
+                No rental history yet
+            </div>
+            <div id="historyTable" class="data-table hidden">
+                <table>
+                    <thead class="history">
+                        <tr>
+                            <th>Office</th>
+                            <th>Customer</th>
+                            <th>Check-in</th>
+                            <th>Check-out</th>
+                            <th>Hours</th>
+                            <th>Total</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="historyBody"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Offices Section -->
+        <h2 class="section-title">Available Offices</h2>
+        
+        <!-- Premium Offices -->
+        <div class="office-grid premium-grid">
+            <div class="office-card" id="office-private">
+                <div class="card-header">
+                    <div class="card-title">
+                        <h3>✨ Solo Workspace</h3>
+                    </div>
+                    <span class="status-badge status-available">Available</span>
+                </div>
+                <div class="card-details">
+                    <p>Capacity: 1 persons</p>
+                    <p>Open: 8am - 6am (24/7)</p>
+                    <p class="price">See rate options</p>
+                </div>
+                <button class="btn btn-primary" data-office-id="private" data-office-name="Solo Workspace" data-price="0" data-capacity="1">Rent Now</button>
+            </div>
+
+            <div class="office-card" id="office-premium">
+                <div class="card-header">
+                    <div class="card-title">
+                        <h3>👥 Social Workspace</h3>
+                    </div>
+                    <span class="status-badge status-available">Available</span>
+                </div>
+                <div class="card-details">
+                    <p>Capacity: 2 persons</p>
+                    <p>Open: 8am - 6am (24/7)</p>
+                    <p class="price">See rate options</p>
+                </div>
+                <button class="btn btn-primary" data-office-id="premium" data-office-name="Social Workspace" data-price="0" data-capacity="2">Rent Now</button>
+            </div>
+            
+            <div class="office-card" id="office-meeting">
+                <div class="card-header">
+                    <div class="card-title">
+                        <h3>🏢 Conference Room</h3>
+                    </div>
+                    <span class="status-badge status-available">Available</span>
+                </div>
+                <div class="card-details">
+                    <p>Capacity: 8 persons</p>
+                    <p>Open: 8am - 6am (24/7)</p>
+                    <p class="price">See rate options</p>
+                </div>
+                <button class="btn btn-primary" data-office-id="meeting" data-office-name="Conference Room" data-price="0" data-capacity="8">Rent Now</button>
+            </div>
+        </div>
+
+        <!-- Solo Offices -->
+        <h3 class="section-title" style="margin-top: 2rem;">Private Workspace</h3>
+        <div class="office-grid solo-grid" id="soloOffices"></div>
+
+        <!-- Active Rentals -->
+        <div id="activeRentalsSection" class="hidden" style="margin-top: 3rem;">
+            <h2 class="section-title">Active Rentals</h2>
+            <div class="data-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Office</th>
+                            <th>Customer</th>
+                            <th>Check-in</th>
+                            <th>Hours</th>
+                            <th>Total</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="rentalsBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Rental Modal -->
+    <div id="rentalModal" class="modal">
+        <div class="modal-content">
+            <h2 class="modal-header">Rent <span id="modalOfficeName"></span></h2>
+            <div class="form-group">
+                <label>Customer Name</label>
+                <input type="text" id="customerName" placeholder="Enter your name">
+            </div>
+            <div class="form-group">
+                <label>
+                    <input type="checkbox" id="useTimer" style="width: auto; margin-right: 0.5rem;">
+                    Timer-based rental (pay by hour)
+                </label>
+            </div>
+            <div id="ratePlanGroup" class="form-group">
+                <label>Rate Plan</label>
+                <select id="ratePlan"></select>
+            </div>
+            <div id="hoursGroup" class="form-group">
+                <label>Hours</label>
+                <input type="number" id="hours" value="1" min="1" max="12">
+            </div>
+            <div id="timerInfo" class="form-group hidden" style="background: #eff6ff; padding: 1rem; border-radius: 0.5rem;">
+                <p style="margin: 0; font-weight: 600; color: #1e3a8a;">Timer Mode: Day Shift ₱50/hr (8am-8pm) | Night Shift ₱60/hr (8pm-6am)</p>
+            </div>
+            <div class="total-box">
+                <p class="total">Total: ₱<span id="totalAmount">0</span></p>
+                <p class="breakdown" id="breakdownText">₱0 × 1 hour(s)</p>
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-primary" id="confirmBtn">Confirm Check-in</button>
+                <button class="btn btn-gray" id="cancelBtn">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // State with localStorage persistence
+        let offices = {
+            private: { id: 'private', name: 'Solo Workspace', available: true, capacity: 1, price: 500 },
+            premium: { id: 'premium', name: 'Social Workspace', available: true, capacity: 2, price: 300 },
+            meeting: { id: 'meeting', name: 'Conference Room', available: true, capacity: 8, price: 800 },
+            solo: []
+        };
+
+        let activeRentals = [];
+        let rentalHistory = [];
+        let selectedOffice = null;
+        const ratePlans = [
+            // Day Shift - General
+            { id: 'day-a', label: 'Day Hourly Rate A (2–3 hrs) — ₱129/hr', price: 129, unit: 'hour', category: 'general' },
+            { id: 'day-b', label: 'Day Hourly Rate B (3–6 hrs) — ₱179/hr', price: 179, unit: 'hour', category: 'general' },
+            { id: 'day-pass', label: 'ONE Day Pass — ₱229', price: 229, unit: 'pass', category: 'general' },
+            { id: 'day-extended', label: 'Day Extended Access — ₱400/hr', price: 400, unit: 'hour', category: 'general' },
+            // Day Shift - Solo
+            { id: 'day-solo', label: 'Day Solo Workspace — ₱50/hr', price: 50, unit: 'hour', category: 'solo' },
+            // Day Shift - Conference
+            { id: 'day-conf', label: 'Day Conference Room — ₱1500 / 4 hrs', price: 1500, unit: 'block4', category: 'conference' },
+            // Night Shift - General
+            { id: 'night-hourly', label: 'Night Hourly Rate — ₱60/hr', price: 60, unit: 'hour', category: 'general' },
+            { id: 'night-c', label: 'Night Hourly Rate C (4–6 hrs) — ₱229/hr', price: 229, unit: 'hour', category: 'general' },
+            { id: 'night-pass', label: 'ONE Night Pass — ₱359', price: 359, unit: 'pass', category: 'general' },
+            { id: 'night-extended', label: 'Night Extended Access — ₱450/hr', price: 450, unit: 'hour', category: 'general' },
+            // Night Shift - Solo
+            { id: 'night-solo', label: 'Night Solo Workspace — ₱60/hr', price: 60, unit: 'hour', category: 'solo' },
+            // Night Shift - Conference
+            { id: 'night-conf', label: 'Night Conference Room — ₱1599 / 4 hrs', price: 1599, unit: 'block4', category: 'conference' },
+            // Special - General
+            { id: 'pass-daynight', label: 'Day–Night Pass (8am–6am) — ₱450', price: 450, unit: 'pass', category: 'general' },
+            { id: 'pass-midnight', label: 'Midnight Pass (8am–12mn) — ₱350', price: 350, unit: 'pass', category: 'general' },
+            { id: 'pass-12to12', label: '12to12 Pass (12nn–12mn) — ₱300', price: 300, unit: 'pass', category: 'general' }
+        ];
+
+        // Initialize solo offices
+        for (let i = 1; i <= 10; i++) {
+            offices.solo.push({
+                id: `solo-${i}`,
+                name: `Private Workspace ${i}`,
+                available: true,
+                capacity: 1,
+                price: 150
+            });
+        }
+
+        // Load data from memory storage
+        function loadData() {
+            const savedOffices = JSON.parse(localStorage.getItem('brainwave_offices') || 'null');
+            const savedRentals = JSON.parse(localStorage.getItem('brainwave_rentals') || '[]');
+            const savedHistory = JSON.parse(localStorage.getItem('brainwave_history') || '[]');
+            
+            if (savedOffices) {
+                offices = savedOffices;
+            }
+            activeRentals = savedRentals;
+            rentalHistory = savedHistory;
+        }
+
+        // Save data to memory storage
+        function saveData() {
+            localStorage.setItem('brainwave_offices', JSON.stringify(offices));
+            localStorage.setItem('brainwave_rentals', JSON.stringify(activeRentals));
+            localStorage.setItem('brainwave_history', JSON.stringify(rentalHistory));
+        }
+
+        function getRatePlanById(id) {
+            return ratePlans.find(plan => plan.id === id) || ratePlans[0];
+        }
+
+        function populateRatePlanSelect(officeType) {
+            const select = document.getElementById('ratePlan');
+            select.innerHTML = '';
+            
+            // Filter rate plans based on office type
+            const filteredPlans = ratePlans.filter(plan => {
+                if (officeType === 'conference') {
+                    return plan.category === 'conference';
+                } else if (officeType === 'solo') {
+                    return plan.category === 'solo';
+                } else if (officeType === 'solo-general') {
+                    // Solo Offices get both general and solo rates
+                    return plan.category === 'general' || plan.category === 'solo';
+                } else {
+                    // general offices (private, premium) get general rates
+                    return plan.category === 'general';
+                }
+            });
+            
+            filteredPlans.forEach(plan => {
+                const option = document.createElement('option');
+                option.value = plan.id;
+                option.textContent = plan.label;
+                select.appendChild(option);
+            });
+            
+            // Set default selection
+            if (filteredPlans.length > 0) {
+                select.value = filteredPlans[0].id;
+            }
+        }
+
+        function computeTotal(plan, hours) {
+            const safeHours = Math.max(1, parseInt(hours, 10) || 1);
+            if (plan.unit === 'pass') {
+                return { total: plan.price, usedHours: 1, blocks: 1, breakdown: `${plan.label} (flat price)` };
+            }
+            if (plan.unit === 'block4') {
+                const blocks = Math.ceil(safeHours / 4);
+                const total = plan.price * blocks;
+                return { total, usedHours: safeHours, blocks, breakdown: `₱${plan.price} per 4 hrs × ${blocks} block(s) for ${safeHours} hr(s)` };
+            }
+            const total = plan.price * safeHours;
+            return { total, usedHours: safeHours, blocks: 1, breakdown: `₱${plan.price} × ${safeHours} hour(s)` };
+        }
+
+        function formatHoursDisplay(record) {
+            if (record.ratePlanUnit === 'pass') return 'Pass';
+            if (record.ratePlanUnit === 'block4') return `${record.hours}h (4hr blocks)`;
+            return `${record.hours}h`;
+        }
+
+        // Render solo offices
+        function renderSoloOffices() {
+            const container = document.getElementById('soloOffices');
+            container.innerHTML = '';
+            
+            offices.solo.forEach(office => {
+                const card = document.createElement('div');
+                card.className = `office-card ${!office.available ? 'unavailable' : ''}`;
+                card.id = `office-${office.id}`;
+                card.innerHTML = `
+                    <div class="card-header">
+                        <div class="card-title">
+                            <h3>🚪 ${office.name}</h3>
+                        </div>
+                        <span class="status-badge ${office.available ? 'status-available' : 'status-occupied'}">
+                            ${office.available ? 'Available' : 'Occupied'}
+                        </span>
+                    </div>
+                    <div class="card-details">
+                        <p>Capacity: 1 person</p>
+                        <p>Open: 8am - 6am (24/7)</p>
+                        <p class="price">See rate options</p>
+                    </div>
+                    <button class="btn ${office.available ? 'btn-primary' : ''}" 
+                            ${!office.available ? 'disabled' : ''} 
+                            data-office-id="${office.id}" 
+                            data-office-name="${office.name}" 
+                            data-price="0" 
+                            data-capacity="1">
+                        ${office.available ? 'Rent Now' : 'Not Available'}
+                    </button>
+                `;
+                container.appendChild(card);
+            });
+            
+            // Add event listeners to all rent buttons
+            document.querySelectorAll('.office-card button').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    if (!this.disabled) {
+                        openRentalModal(
+                            this.dataset.officeId,
+                            this.dataset.officeName,
+                            parseInt(this.dataset.price),
+                            parseInt(this.dataset.capacity)
+                        );
+                    }
+                });
+            });
+        }
+
+        function openRentalModal(id, name, price, capacity) {
+            selectedOffice = { id, name, price, capacity };
+            document.getElementById('modalOfficeName').textContent = name;
+            document.getElementById('customerName').value = '';
+            document.getElementById('hours').value = 1;
+            document.getElementById('useTimer').checked = false;
+            
+            // Determine office type and populate rate plans accordingly
+            let officeType = 'general'; // default
+            if (id === 'meeting') {
+                officeType = 'conference';
+            } else if (id === 'private') {
+                officeType = 'solo'; // Private Office uses Solo Workspace rates
+            } else if (id === 'premium') {
+                officeType = 'solo-general'; // Premium Office uses both general and solo rates
+            } else if (id.startsWith('solo-')) {
+                officeType = 'solo-general'; // Solo Offices use both general and solo rates
+            }
+            
+            populateRatePlanSelect(officeType);
+            toggleTimerMode();
+            updateTotal();
+            document.getElementById('rentalModal').classList.add('active');
+        }
+
+        function toggleTimerMode() {
+            const useTimer = document.getElementById('useTimer').checked;
+            const ratePlanGroup = document.getElementById('ratePlanGroup');
+            const hoursGroup = document.getElementById('hoursGroup');
+            const timerInfo = document.getElementById('timerInfo');
+            
+            if (useTimer) {
+                ratePlanGroup.classList.add('hidden');
+                hoursGroup.classList.add('hidden');
+                timerInfo.classList.remove('hidden');
+            } else {
+                ratePlanGroup.classList.remove('hidden');
+                hoursGroup.classList.remove('hidden');
+                timerInfo.classList.add('hidden');
+            }
+            updateTotal();
+        }
+
+        function getCurrentRate() {
+            const now = new Date();
+            const hour = now.getHours();
+            // Day Shift: 8am-8pm (8-19), Night Shift: 8pm-6am (20-23, 0-5)
+            if (hour >= 8 && hour < 20) {
+                return { price: 50, label: 'Day Shift', shift: 'day' };
+            } else {
+                return { price: 60, label: 'Night Shift', shift: 'night' };
+            }
+        }
+
+        function calculateTimerCost(checkInTime) {
+            const now = new Date();
+            const checkIn = new Date(checkInTime);
+            const diffMs = now - checkIn;
+            const diffHours = diffMs / (1000 * 60 * 60);
+            
+            // Calculate cost for each hour based on shift
+            let totalCost = 0;
+            let currentTime = new Date(checkIn);
+            const endTime = new Date(now);
+            
+            // Calculate hour by hour
+            while (currentTime < endTime) {
+                const hour = currentTime.getHours();
+                // Day Shift: 8am-8pm (8-19) = ₱50/hr, Night Shift: 8pm-6am (20-23, 0-5) = ₱60/hr
+                const rate = (hour >= 8 && hour < 20) ? 50 : 60;
+                
+                // Calculate how much of this hour has passed
+                const nextHour = new Date(currentTime);
+                nextHour.setHours(nextHour.getHours() + 1);
+                nextHour.setMinutes(0);
+                nextHour.setSeconds(0);
+                nextHour.setMilliseconds(0);
+                
+                const hourEnd = nextHour < endTime ? nextHour : endTime;
+                const fractionOfHour = (hourEnd - currentTime) / (1000 * 60 * 60);
+                
+                totalCost += rate * fractionOfHour;
+                currentTime = nextHour;
+            }
+            
+            return {
+                hours: Math.max(0.01, diffHours),
+                total: Math.ceil(totalCost),
+                displayHours: diffHours.toFixed(2)
+            };
+        }
+
+        function closeModal() {
+            document.getElementById('rentalModal').classList.remove('active');
+            selectedOffice = null;
+        }
+
+        function updateTotal() {
+            if (!selectedOffice) return;
+            const useTimer = document.getElementById('useTimer').checked;
+            
+            if (useTimer) {
+                const rate = getCurrentRate();
+                document.getElementById('totalAmount').textContent = rate.price;
+                document.getElementById('breakdownText').textContent = `${rate.label} — ₱${rate.price}/hour (will calculate on checkout)`;
+            } else {
+                const plan = getRatePlanById(document.getElementById('ratePlan').value);
+                const hoursInput = document.getElementById('hours');
+
+                if (plan.unit === 'pass') {
+                    hoursInput.disabled = true;
+                    hoursInput.value = 1;
+                } else {
+                    hoursInput.disabled = false;
+                }
+
+                const { total, usedHours, blocks, breakdown } = computeTotal(plan, hoursInput.value);
+                document.getElementById('totalAmount').textContent = total;
+                document.getElementById('breakdownText').textContent =
+                    plan.unit === 'block4'
+                        ? breakdown
+                        : (plan.unit === 'pass'
+                            ? breakdown
+                            : `₱${plan.price} × ${usedHours} hour(s)`);
+            }
+        }
+
+        function confirmCheckIn() {
+            const customerName = document.getElementById('customerName').value.trim();
+            const useTimer = document.getElementById('useTimer').checked;
+
+            if (!customerName) {
+                alert('Please enter customer name');
+                return;
+            }
+
+            const checkInTime = new Date();
+            let rental;
+
+            if (useTimer) {
+                // Timer-based rental
+                rental = {
+                    id: Date.now(),
+                    officeId: selectedOffice.id,
+                    officeName: selectedOffice.name,
+                    customer: customerName,
+                    hours: 0,
+                    ratePlanId: 'timer',
+                    ratePlanLabel: 'Timer-based (Day ₱50/hr, Night ₱60/hr)',
+                    ratePlanUnit: 'timer',
+                    total: 0,
+                    checkIn: checkInTime.toISOString(),
+                    checkInDisplay: checkInTime.toLocaleString(),
+                    isTimer: true
+                };
+            } else {
+                // Fixed hours rental
+                const plan = getRatePlanById(document.getElementById('ratePlan').value);
+                const hoursInputValue = document.getElementById('hours').value;
+                const { total, usedHours } = computeTotal(plan, hoursInputValue);
+
+                rental = {
+                    id: Date.now(),
+                    officeId: selectedOffice.id,
+                    officeName: `${selectedOffice.name} (${plan.label})`,
+                    customer: customerName,
+                    hours: usedHours,
+                    ratePlanId: plan.id,
+                    ratePlanLabel: plan.label,
+                    ratePlanUnit: plan.unit,
+                    total: total,
+                    checkIn: checkInTime.toISOString(),
+                    checkInDisplay: checkInTime.toLocaleString(),
+                    isTimer: false
+                };
+            }
+
+            activeRentals.unshift(rental);
+            updateOfficeAvailability(selectedOffice.id, false);
+            renderActiveRentals();
+            saveData();
+
+            // Show success message
+            const successMsg = document.getElementById('successMessage');
+            successMsg.classList.remove('hidden');
+            setTimeout(() => successMsg.classList.add('hidden'), 2000);
+
+            closeModal();
+        }
+
+        function updateOfficeAvailability(officeId, available) {
+            const card = document.getElementById(`office-${officeId}`);
+            if (!card) return;
+
+            const badge = card.querySelector('.status-badge');
+            const button = card.querySelector('button');
+
+            if (officeId === 'private') {
+                offices.private.available = available;
+            } else if (officeId === 'premium') {
+                offices.premium.available = available;
+            } else if (officeId === 'meeting') {
+                offices.meeting.available = available;
+            } else {
+                const solo = offices.solo.find(o => o.id === officeId);
+                if (solo) solo.available = available;
+            }
+
+            if (available) {
+                card.classList.remove('unavailable');
+                badge.className = 'status-badge status-available';
+                badge.textContent = 'Available';
+                button.className = 'btn btn-primary';
+                button.textContent = 'Rent Now';
+                button.disabled = false;
+            } else {
+                card.classList.add('unavailable');
+                badge.className = 'status-badge status-occupied';
+                badge.textContent = 'Occupied';
+                button.className = 'btn';
+                button.textContent = 'Not Available';
+                button.disabled = true;
+            }
+        }
+
+        function renderActiveRentals() {
+            const section = document.getElementById('activeRentalsSection');
+            const tbody = document.getElementById('rentalsBody');
+
+            if (activeRentals.length === 0) {
+                section.classList.add('hidden');
+                return;
+            }
+
+            section.classList.remove('hidden');
+            tbody.innerHTML = '';
+
+            activeRentals.forEach(rental => {
+                let hoursDisplay, totalDisplay;
+                
+                if (rental.isTimer) {
+                    const timerData = calculateTimerCost(rental.checkIn);
+                    hoursDisplay = `${timerData.displayHours}h (timer)`;
+                    totalDisplay = `₱${timerData.total}`;
+                } else {
+                    hoursDisplay = formatHoursDisplay(rental);
+                    totalDisplay = `₱${rental.total}`;
+                }
+                
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td style="font-weight: 600;">${rental.officeName}</td>
+                    <td>${rental.customer}</td>
+                    <td style="font-size: 0.875rem;">${rental.checkInDisplay || rental.checkIn}</td>
+                    <td id="hours-${rental.id}">${hoursDisplay}</td>
+                    <td id="total-${rental.id}" style="font-weight: 700; color: #2563eb;">${totalDisplay}</td>
+                    <td>
+                        <button class="btn btn-danger" data-rental-id="${rental.id}">Check Out</button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+
+            // Add event listeners to checkout buttons
+            document.querySelectorAll('.btn-danger').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    checkOut(parseInt(this.dataset.rentalId));
+                });
+            });
+
+            // Start timer updates for timer-based rentals
+            startTimerUpdates();
+        }
+
+        let timerInterval = null;
+
+        function startTimerUpdates() {
+            if (timerInterval) clearInterval(timerInterval);
+            
+            timerInterval = setInterval(() => {
+                activeRentals.forEach(rental => {
+                    if (rental.isTimer) {
+                        const timerData = calculateTimerCost(rental.checkIn);
+                        const hoursCell = document.getElementById(`hours-${rental.id}`);
+                        const totalCell = document.getElementById(`total-${rental.id}`);
+                        
+                        if (hoursCell) {
+                            hoursCell.textContent = `${timerData.displayHours}h (timer)`;
+                        }
+                        if (totalCell) {
+                            totalCell.textContent = `₱${timerData.total}`;
+                        }
+                        
+                        // Update rental object
+                        rental.hours = timerData.hours;
+                        rental.total = timerData.total;
+                    }
+                });
+            }, 1000); // Update every second
+        }
+
+        function checkOut(rentalId) {
+            const rental = activeRentals.find(r => r.id === rentalId);
+            if (!rental) return;
+
+            // Calculate final cost for timer-based rentals
+            if (rental.isTimer) {
+                const timerData = calculateTimerCost(rental.checkIn);
+                rental.hours = timerData.hours;
+                rental.total = timerData.total;
+            }
+
+            // Add to history
+            rentalHistory.unshift({
+                ...rental,
+                checkOut: new Date().toLocaleString(),
+                status: 'Completed'
+            });
+
+            // Remove from active rentals
+            activeRentals = activeRentals.filter(r => r.id !== rentalId);
+
+            // Update office availability
+            updateOfficeAvailability(rental.officeId, true);
+
+            renderActiveRentals();
+            updateHistoryCount();
+            saveData();
+            
+            // If history is open, refresh it
+            if (!document.getElementById('historySection').classList.contains('hidden')) {
+                renderHistory();
+            }
+        }
+
+        function toggleHistory() {
+            const section = document.getElementById('historySection');
+            const btnText = document.getElementById('historyBtnText');
+            
+            if (section.classList.contains('hidden')) {
+                section.classList.remove('hidden');
+                btnText.textContent = 'Hide History';
+                renderHistory();
+            } else {
+                section.classList.add('hidden');
+                btnText.textContent = 'View History';
+            }
+        }
+
+        function renderHistory() {
+            const emptyState = document.getElementById('historyEmpty');
+            const table = document.getElementById('historyTable');
+            const tbody = document.getElementById('historyBody');
+
+            if (rentalHistory.length === 0) {
+                emptyState.classList.remove('hidden');
+                table.classList.add('hidden');
+                return;
+            }
+
+            emptyState.classList.add('hidden');
+            table.classList.remove('hidden');
+            tbody.innerHTML = '';
+
+            rentalHistory.forEach(record => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td style="font-weight: 600;">${record.officeName}</td>
+                    <td>${record.customer}</td>
+                    <td style="font-size: 0.875rem;">${record.checkIn}</td>
+                    <td style="font-size: 0.875rem;">${record.checkOut}</td>
+                    <td>${formatHoursDisplay(record)}</td>
+                    <td style="font-weight: 700; color: #2563eb;">₱${record.total}</td>
+                    <td>
+                        <span class="status-badge status-available">${record.status}</span>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function updateHistoryCount() {
+            document.getElementById('historyCount').textContent = rentalHistory.length;
+        }
+
+        function clearHistory() {
+            if (confirm('Are you sure you want to clear the rental history?\n\nThis will permanently delete all past rental records.\n\nActive rentals will NOT be affected.')) {
+                rentalHistory = [];
+                saveData();
+                updateHistoryCount();
+                renderHistory();
+                alert('Rental history has been cleared!');
+            }
+        }
+
+        // Initialize everything on page load
+        window.addEventListener('DOMContentLoaded', function() {
+            loadData();
+            renderSoloOffices();
+            renderActiveRentals();
+            updateHistoryCount();
+
+            // Event listeners
+            document.getElementById('historyBtn').addEventListener('click', toggleHistory);
+            document.getElementById('confirmBtn').addEventListener('click', confirmCheckIn);
+            document.getElementById('cancelBtn').addEventListener('click', closeModal);
+            document.getElementById('hours').addEventListener('input', updateTotal);
+            document.getElementById('clearHistoryBtn').addEventListener('click', clearHistory);
+            document.getElementById('ratePlan').addEventListener('change', updateTotal);
+            document.getElementById('useTimer').addEventListener('change', toggleTimerMode);
+            
+            // Close modal on outside click
+            document.getElementById('rentalModal').addEventListener('click', function(e) {
+                if (e.target.id === 'rentalModal') {
+                    closeModal();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
